@@ -1,3 +1,5 @@
+
+
 public class Functions_in_Java {
 
 
@@ -14,9 +16,6 @@ public class Functions_in_Java {
         System.out.print(word);
 
     }
-
-
-
 
 
 }
