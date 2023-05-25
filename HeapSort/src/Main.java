@@ -13,7 +13,7 @@ public class Main {
         }
     }
 
-    public static void Sort(int arr[]){
+    public static void sort(int arr[]){
         int n=arr.length;
         //построение пирамиды
         for(int i = n / 2 - 1; i >= 0; i--) {
@@ -32,7 +32,7 @@ public class Main {
     }
 
     //просеивание поддерева с корнем i
-    public static void Hepify(int arr[], int n, int i){
+    public static void hepify(int arr[], int n, int i){
         int largest = i;//инициализируем наибольший элемент как корень
         int l=2*i+1;//левый дочерний элемент
         int r=2*i+2;//правый дочерний элемент
