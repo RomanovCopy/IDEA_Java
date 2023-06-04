@@ -18,10 +18,10 @@ public class _002 {
 	}
 	
 	private static boolean[] createArray(int length) {
-		Random rand=new Random();
+		var rand=new Random();
 		boolean[]list =new boolean[length];
 		for(int i=0;i<length;i++) {
-			list[i]=rand.nextInt(1)==1;
+			list[i]=rand.nextInt(2)==1;
 		}
 		return list;
 	}
