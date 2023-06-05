@@ -13,7 +13,7 @@ public class Program {
 		//new Task_03();
 		
 		//запуск задачи 4
-		new Task_04();
+		//new Task_04();
 	}
 
 }
