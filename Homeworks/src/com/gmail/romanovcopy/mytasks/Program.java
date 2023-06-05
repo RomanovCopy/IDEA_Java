@@ -10,10 +10,10 @@ public class Program {
 		//new Task_02(1000);
 		
 		//запуск задачи 3
-		new Task_03();
+		//new Task_03();
 		
 		//запуск задачи 4
-		//new Task_04();
+		new Task_04();
 	}
 
 }
