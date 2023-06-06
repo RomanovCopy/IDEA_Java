@@ -10,11 +10,11 @@ import java.util.Scanner;
 
 public class _010 {
 
-    char[]operations;
+    Character[]operations;
 
     
     public _010(){
-        operations=new char[]{'+', '-', '*', '/' };
+        operations=new Character []{'+', '-', '*', '/', '=' };
         String equation = getEquation();
         if(equation.length()>3){
             equation=equationNormalization(equation);
@@ -42,6 +42,19 @@ public class _010 {
     //разбиение уравнения на составные части
     private String[] gettingTheComponentsOfAnEquation(String equation){
         String[]array=equation.split("[+\\-\\/\\*\\=]");
+        int count=0;
+        array[count]=equation.charAt(count)=='-'?Character.toString('-')+array[count]:Character.toString('+')+array[count];
+        count++;
+        for(int i=1; i<equation.length();i++){
+            char ch = equation.charAt(i);
+            var notEnd=i<equation.length()-1;
+            if(ch=='+'||ch=='-'){
+                if(notEnd && !(equation.charAt(i+1)=='+'||equation.charAt(i+1)=='-')){
+                    array[count]=Character.toString(ch)+array[count];
+                    count++;
+                }
+            }
+        }
         return array;
     }
 
