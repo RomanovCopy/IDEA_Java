@@ -5,29 +5,43 @@
 Знаки вопроса - одинаковые цифры.
 Предложить хотя бы одно решение или сообщить, что его нет.*/
 
+
+import java.util.Scanner;
+
 public class _010 {
 
-    public _010(){
+    char[]operations;
 
+    
+    public _010(){
+        operations=new char[]{'+', '-', '*', '/' };
+        String equation = getEquation();
+        if(equation.length()>3){
+            equation=equationNormalization(equation);
+            String[]elements=gettingTheComponentsOfAnEquation(equation);
+
+        }
     }
 
     //получение уравнения
     private String getEquation(){
-        var value="";
 
+        var value="";
+        Scanner scanner=new Scanner(System.in);
+        value=scanner.nextLine();
+        scanner.close();
         return value;
     }
 
     private String equationNormalization(String equation){
-        var value="";
+        var value=equation;
 
         return value;
     }
 
     //разбиение уравнения на составные части
     private String[] gettingTheComponentsOfAnEquation(String equation){
-        String[]array=new String[3];
-
+        String[]array=equation.split("[+\\-\\/\\*\\=]");
         return array;
     }
 
