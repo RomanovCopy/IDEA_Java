@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         //генерируем список
-        createList(10);
+        createList(15);
         System.out.println("Список до реверсирования :");
         //выводим список в начальном виде
         printList();
