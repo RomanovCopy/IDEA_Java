@@ -6,58 +6,52 @@
 Предложить хотя бы одно решение или сообщить, что его нет.*/
 
 
+import java.util.ArrayList;
 import java.util.Scanner;
+
 
 public class _010 {
 
     Character[]operations;
+    String equation;//полное выражение
+    String leftPart;//выражение до знака =
+    String rightPart;//выражение после знака =
+    int unknown;//колличество неизвестных разрядов(вместо цифры - '?')
 
     
     public _010(){
         operations=new Character []{'+', '-', '*', '/', '=' };
-        String equation = getEquation();
-        if(equation.length()>3){
-            equation=equationNormalization(equation);
-            String[]elements=gettingTheComponentsOfAnEquation(equation);
-
-        }
-    }
-
-    //получение уравнения
-    private String getEquation(){
-
-        var value="";
-        Scanner scanner=new Scanner(System.in);
-        value=scanner.nextLine();
-        scanner.close();
-        return value;
-    }
-
-    private String equationNormalization(String equation){
-        var value=equation;
-
-        return value;
-    }
-
-    //разбиение уравнения на составные части
-    private String[] gettingTheComponentsOfAnEquation(String equation){
-        String[]array=equation.split("[+\\-\\/\\*\\=]");
-        int count=0;
-        array[count]=equation.charAt(count)=='-'?Character.toString('-')+array[count]:Character.toString('+')+array[count];
-        count++;
-        for(int i=1; i<equation.length();i++){
-            char ch = equation.charAt(i);
-            var notEnd=i<equation.length()-1;
-            if(ch=='+'||ch=='-'){
-                if(notEnd && !(equation.charAt(i+1)=='+'||equation.charAt(i+1)=='-')){
-                    array[count]=Character.toString(ch)+array[count];
-                    count++;
+        System.out.print("Введи выражение: ");
+        equation = getEquation();
+        if(leftPart.length()>0 && rightPart.length()>0){
+            var list = searchForOptions(leftPart, rightPart, unknown);
+            if(list.size()>0){
+                for(var eq:list){
+                    System.out.println(eq);
                 }
             }
+            else{
+                System.out.println("Вариантов удовлетворяющих выражению не найдено");
+            }
         }
-        return array;
     }
 
+    //получение и первичная обработка уравнения
+    private String getEquation(){
 
+        var scanner=new Scanner(System.in);
+        var value=scanner.nextLine();
+        scanner.close();
+        var array=value.split("[=]");
+        leftPart=array[0];
+        rightPart=array[1];
+        for(int i=0; i<value.length();i++) unknown+=value.charAt(i)=='?'?1:0;
+        return value;
+    }
 
+    private ArrayList<String>searchForOptions(String left, String right, int number){
+        var list=new ArrayList<String>();
+
+        return list;
+    }
 }
