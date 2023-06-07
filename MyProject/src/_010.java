@@ -44,8 +44,9 @@ public class _010 {
         var value=scanner.nextLine();
         scanner.close();
         var array=value.split("[=]");
-        leftPart=array[0];
-        rightPart=array[1];
+        leftPart=array[0];//левая часть выражения
+        rightPart=array[1];//правая часть выражения
+        //поиск индексов неизвестных значений
         for(int i=0; i<value.length();i++){
             if(value.charAt(i)=='?'){
                 indexes.add(i);
@@ -54,13 +55,16 @@ public class _010 {
         return value;
     }
 
+
     private ArrayList<String>searchForOptions(String left, String right){
         var list=new ArrayList<String>();
         int digits=indexes.size();
         var array=equation.toCharArray();
+        //установка начального значения(0) для неизвестных элементов
         for(int index:indexes){
             array[index]='0';
         }
+        //перебор и валидация  значений для неизвестных элементов
         for(int i=0;i<Math.pow(10, digits);i++){
             int value=(int)Math.pow(10, digits)+i;
             for(int index:indexes){
@@ -69,6 +73,8 @@ public class _010 {
                 array[index]=str.toCharArray()[0];
                 value/=10;
             }
+            //валидация выражения с
+            //установленными значениями
             String temp=new String(array);
             if(validate(temp)){
                 list.add(temp);
@@ -77,20 +83,66 @@ public class _010 {
         return list;
     }
 
+    //проверка истинности выражения
     private boolean validate(String option){
         boolean result=false;
         var array=option.split("[=]");
         var left=array[0];
         var right=array[1];
+        //вычисление левой части выражения
         var c=eval(left);
+        //равенство левой и правой частей
+        result=c==Double.parseDouble(right);
         return result;
     }
 
     private double eval(String expression ){
         double result=0;
         int count=0;
-        var numbers = expression.split("[ \\+ \\- \\* \\/ ]");
+        var numbers = expression.split("[ \\+ \\- \\* \\/\\)\\( ]");
         var operators=expression.split("[0-9]+\\s*");
+        //обработка операций в скобках
+        int index=bracketSearch(operators, ")");
+        while(index>=0){
+
+        }
         return result;
     }
+
+    private double execute(double val1, double val2, char operation){
+        double result=0;
+        switch(operation){
+            case '+':{
+                result=val1+val2;
+                break;
+            }
+            case '-':{
+                result=val1-val2;
+                break;
+            }
+            case '*':{
+                result=val1*val2;
+                break;
+            }
+            case '/':{
+                result=val1/val2;
+                break;
+            }
+            default:{
+            }
+        }
+        return result;
+    }
+
+    //поиск индекса первых закрывающих скобок
+    private int bracketSearch( String[]array, String bracket ){
+        for(int i=0; i<array.length; i++){
+            if(array[i].contains(bracket)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
 }
