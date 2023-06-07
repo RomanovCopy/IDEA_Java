@@ -61,7 +61,7 @@ public class _010 {
         for(int index:indexes){
             array[index]='0';
         }
-        for(int i=1;i<Math.pow(10, digits);i++){
+        for(int i=0;i<Math.pow(10, digits);i++){
             int value=(int)Math.pow(10, digits)+i;
             for(int index:indexes){
                 int temp=value%10;
@@ -69,8 +69,28 @@ public class _010 {
                 array[index]=str.toCharArray()[0];
                 value/=10;
             }
-            
+            String temp=new String(array);
+            if(validate(temp)){
+                list.add(temp);
+            }
         }
         return list;
+    }
+
+    private boolean validate(String option){
+        boolean result=false;
+        var array=option.split("[=]");
+        var left=array[0];
+        var right=array[1];
+        var c=eval(left);
+        return result;
+    }
+
+    private double eval(String expression ){
+        double result=0;
+        int count=0;
+        var numbers = expression.split("[ \\+ \\- \\* \\/ ]");
+        var operators=expression.split("[0-9]+\\s*");
+        return result;
     }
 }
