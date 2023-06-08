@@ -51,6 +51,12 @@ public class _010 {
         return value;
     }
 
+    /**
+     * перебор и расчет значений неизвестных
+     * @param left левая часть выражения
+     * @param right правая часть выражения
+     * @return массив удовлетворяющих условию выражений
+     */
     private ArrayList<String> searchForOptions(String left, String right) {
         var list = new ArrayList<String>();
         int digits = indexes.size();
@@ -78,7 +84,11 @@ public class _010 {
         return list;
     }
 
-    // проверка истинности выражения
+    /**
+     * проверка истинности выражения
+     * @param option выражение
+     * @return результат проверки True или False
+     */
     private boolean validate(String option) {
         boolean result = false;
         var array = option.split("[=]");
@@ -133,22 +143,52 @@ public class _010 {
         var b = line.indexOf('/');
         var d = line.indexOf('+');
         var e = line.indexOf('-');
+        if( a<0 && b<0 && d<0 && e<0 ){
+            return result;
+        }
+        int index=0;
+        char operation='=';
         if (a > 0 || b > 0) {
             if (a > 0 && b > 0) {
                 if (a < b) {
-                    result=simpleCalculation(searchNumberLeft(line, a), searchNumberRight(line, a), '*');
+                    operation='*';
+                    index=a;
                 } else {
-
+                    operation='/';
+                    index=b;
                 }
             } else if (a > 0 && b < 0) {
-                result=simpleCalculation(searchNumberLeft(line, a), searchNumberRight(line, a), '*');
+                operation='*';
+                index=a;
             } else {
-
+                operation='/';
+                index=b;
             }
         }
-        if (d > 0 || e > 0) {
-
+        else if (d > 0 || e > 0) {
+            if (d > 0 && e > 0) {
+                if (d < e) {
+                    operation='+';
+                    index=d;
+                } else {
+                    operation='-';
+                    index=e;
+                }
+            } else if (d > 0 && e < 0) {
+                operation='+';
+                index=d;
+            } else {
+                operation='-';
+                index=e;
+            }
         }
+        double left=searchNumberLeft(line, index);
+        double right=searchNumberRight(line, index);
+        result=simpleCalculation(left, right, operation);
+        
+        String newLine=line.replace(line.substring(
+            index-Double.toString(left).length(), index+Double.toString(right).length()), Double.toString(result));
+        calculation(newLine);
         return result;
     }
 
@@ -186,25 +226,6 @@ public class _010 {
         return result;
     }
 
-    // поиск индекса первых закрывающих скобок
-    private int bracketSearch(String[] array, String bracket) {
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].contains(bracket)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private String getSubstring(String str, char startChar, char endChar) {
-        int startIndex = str.indexOf(startChar);
-        int endIndex = str.indexOf(endChar, startIndex + 1);
-        if (startIndex != -1 && endIndex != -1) {
-            return str.substring(startIndex + 1, endIndex);
-        }
-        return "";
-    }
-
     /**
      * поиск числа слева от заданной позиции в строке
      * 
@@ -215,7 +236,7 @@ public class _010 {
     private double searchNumberLeft(String line, int position) {
         double result = 0;
         String sub="";
-        for(int i=position; i>=0; i--){
+        for(int i=position-1; i>=0; i--){
             var ch=line.charAt(i);
             var end=ch=='+'||ch=='-'||ch=='*'||ch=='/';
             if(!end){
@@ -241,7 +262,7 @@ public class _010 {
     private double searchNumberRight(String line, int position) {
         double result = 0;
         String sub="";
-        for(int i=position; i<line.length(); i++){
+        for(int i=position+1; i<line.length(); i++){
             var ch=line.charAt(i);
             var end=ch=='+'||ch=='-'||ch=='*'||ch=='/';
             if(!end){
