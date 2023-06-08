@@ -5,6 +5,7 @@
 Знаки вопроса - одинаковые цифры.
 Предложить хотя бы одно решение или сообщить, что его нет.*/
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -109,6 +110,7 @@ public class _010 {
      */
     private double eval(String expression) {
         double result = 0;
+        //обработка всех скобок в выражении
         int index = expression.indexOf(')', 1);
         while (index >= 0) {
             // определяем индекс ближайшей открывающей скобки
@@ -120,13 +122,14 @@ public class _010 {
             }
             // получаем подстроку из скобок
             var sub = expression.substring(c + 1, index);
+            result=calculation(sub);
             // вычисляем значение подстроки
-            var res = Double.toString(calculation(sub));
+            var res = Double.toString(result);
             // заменяем подстроку на результат выполнения операции
             expression = expression.replace("(" + sub + ")", res);
-            var a = expression;
-
+            index=expression.indexOf(')',1);
         }
+        result=calculation(expression);
         return result;
     }
 
@@ -138,14 +141,16 @@ public class _010 {
      * @return результат вычисления(double)
      */
     private double calculation(String line) {
-        double result = 0;
+        //индексы операций в строке
         var a = line.indexOf('*');
         var b = line.indexOf('/');
         var d = line.indexOf('+');
         var e = line.indexOf('-');
         if( a<0 && b<0 && d<0 && e<0 ){
-            return result;
+            //если нет операций, выводим результат
+            return Double.parseDouble(line);
         }
+        //выбор очередной операции
         int index=0;
         char operation='=';
         if (a > 0 || b > 0) {
@@ -182,14 +187,18 @@ public class _010 {
                 index=e;
             }
         }
-        double left=searchNumberLeft(line, index);
-        double right=searchNumberRight(line, index);
-        result=simpleCalculation(left, right, operation);
-        
-        String newLine=line.replace(line.substring(
-            index-Double.toString(left).length(), index+Double.toString(right).length()), Double.toString(result));
-        calculation(newLine);
-        return result;
+        //выполнение выбранной операции и переход к следующей
+        double left=searchNumberLeft(line, index);//левое от знака значение
+        double right=searchNumberRight(line, index);//правое от знака значение
+        double result=simpleCalculation(left, right, operation);//выполнение операции
+        int leftLength=doubleToString(left).length();//длина левого значения
+        int rightLength=doubleToString(right).length();//длина правого значения
+        int leftIndex=index-leftLength;//индекс начала левого значения
+        int rightIndex=index+rightLength;//индекс окончания правого значения
+        //замена выражения на результат его выполнения
+        String newLine=line.replace(line.substring(leftIndex, rightIndex), doubleToString(result));
+        //полученную новую строку отправляем на дальнейшую обработку
+        return calculation(newLine);
     }
 
     /**
@@ -278,4 +287,13 @@ public class _010 {
         return result;
     }
 
+    /**
+     * адекватное преобразование double to String
+     * @param number число типа double
+     * @return число преобразованное в строку
+     */
+    private String doubleToString(double number){
+        BigDecimal decimal = new BigDecimal(number);
+        return decimal.toPlainString();
+    }
 }
