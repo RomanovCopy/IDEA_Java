@@ -5,9 +5,7 @@
 Знаки вопроса - одинаковые цифры.
 Предложить хотя бы одно решение или сообщить, что его нет.*/
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class _010 {
@@ -21,7 +19,7 @@ public class _010 {
 
     public _010() {
         operations = new Character[] { '+', '-', '*', '/', '=', ')', '(' };
-        numbers=new Character[]{'0','1','2','3','4','5','6','7','8','9'};
+        numbers = new Character[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         indexes = new ArrayList<>();
         System.out.print("Введи выражение: ");
         equation = getEquation();
@@ -45,6 +43,7 @@ public class _010 {
         var scanner = new Scanner(System.in);
         var value = scanner.nextLine();
         scanner.close();
+        value=value.replace(" ", "");
         var array = value.split("[=]");
         leftPart = array[0];// левая часть выражения
         rightPart = array[1];// правая часть выражения
@@ -59,7 +58,8 @@ public class _010 {
 
     /**
      * перебор и расчет значений неизвестных
-     * @param left левая часть выражения
+     * 
+     * @param left  левая часть выражения
      * @param right правая часть выражения
      * @return массив удовлетворяющих условию выражений
      */
@@ -83,7 +83,6 @@ public class _010 {
             // валидация выражения с
             // установленными значениями
             String temp = new String(array);
-            temp=normalize(temp);
             if (validate(temp)) {
                 list.add(temp);
             }
@@ -92,20 +91,8 @@ public class _010 {
     }
 
     /**
-     * удаление символа '0' если он стоит
-     * в начале слова
-     * @param str строка
-     * @return преобразованная строка
-     */
-    private String normalize(String str) {
-        String line="";
-            String regex = "\\b0+([1-9]+\\d*)\\b";
-            line = str.replaceAll(regex, "$1");
-        return line;
-    }
-
-    /**
      * проверка истинности выражения
+     * 
      * @param option выражение
      * @return результат проверки True или False
      */
@@ -117,7 +104,10 @@ public class _010 {
         // вычисление левой части выражения
         var c = eval(left);
         // равенство левой и правой частей
-        result = c == Double.parseDouble(right);
+        result = c == Integer.parseInt(right);
+        if(result){
+            result=Integer.parseInt(right)==eval(left);
+        }
         return result;
     }
 
@@ -127,9 +117,9 @@ public class _010 {
      * @param expression строка
      * @return результат
      */
-    private double eval(String expression) {
-        double result = 0;
-        //обработка всех скобок в выражении
+    private int eval(String expression) {
+        int result = 0;
+        // обработка всех скобок в выражении
         int index = expression.indexOf(')', 1);
         while (index >= 0) {
             // определяем индекс ближайшей открывающей скобки
@@ -141,14 +131,14 @@ public class _010 {
             }
             // получаем подстроку из скобок
             var sub = expression.substring(c + 1, index);
-            result=calculation(sub);
+            result = calculation(sub);
             // вычисляем значение подстроки
-            var res = Double.toString(result);
+            var res = Integer.toString(result);
             // заменяем подстроку на результат выполнения операции
             expression = expression.replace("(" + sub + ")", res);
-            index=expression.indexOf(')',1);
+            index = expression.indexOf(')', 1);
         }
-        result=calculation(expression);
+        result = calculation(expression);
         return result;
     }
 
@@ -159,64 +149,63 @@ public class _010 {
      * @param line вычисляемая строка(String)
      * @return результат вычисления(double)
      */
-    private double calculation(String line) {
-        //индексы операций в строке
+    private int calculation(String line) {
+        // индексы операций в строке
         var a = line.indexOf('*');
         var b = line.indexOf('/');
         var d = line.indexOf('+');
         var e = line.indexOf('-');
-        if( a<0 && b<0 && d<0 && e<0 ){
-            //если нет операций, выводим результат
-            return Double.parseDouble(line);
+        if (a < 0 && b < 0 && d < 0 && e < 0) {
+            // если нет операций, выводим результат
+            return Integer.parseInt(line);
         }
-        //выбор очередной операции
-        int index=0;
-        char operation='=';
+        // выбор очередной операции
+        int index = 0;
+        char operation = '=';
         if (a > 0 || b > 0) {
             if (a > 0 && b > 0) {
                 if (a < b) {
-                    operation='*';
-                    index=a;
+                    operation = '*';
+                    index = a;
                 } else {
-                    operation='/';
-                    index=b;
+                    operation = '/';
+                    index = b;
                 }
             } else if (a > 0 && b < 0) {
-                operation='*';
-                index=a;
+                operation = '*';
+                index = a;
             } else {
-                operation='/';
-                index=b;
+                operation = '/';
+                index = b;
             }
-        }
-        else if (d > 0 || e > 0) {
+        } else if (d > 0 || e > 0) {
             if (d > 0 && e > 0) {
                 if (d < e) {
-                    operation='+';
-                    index=d;
+                    operation = '+';
+                    index = d;
                 } else {
-                    operation='-';
-                    index=e;
+                    operation = '-';
+                    index = e;
                 }
             } else if (d > 0 && e < 0) {
-                operation='+';
-                index=d;
+                operation = '+';
+                index = d;
             } else {
-                operation='-';
-                index=e;
+                operation = '-';
+                index = e;
             }
         }
-        //выполнение выбранной операции и переход к следующей
-        double left=searchNumberLeft(line, index);//левое от знака значение
-        double right=searchNumberRight(line, index);//правое от знака значение
-        double result=simpleCalculation(left, right, operation);//выполнение операции
-        int leftLength=doubleToString(left).length();//длина левого значения
-        int rightLength=doubleToString(right).length();//длина правого значения
-        int leftIndex=index-leftLength;//индекс начала левого значения
-        int rightIndex=index+rightLength+1;//индекс окончания правого значения
-        //замена выражения на результат его выполнения
-        String newLine=line.replace(line.substring(leftIndex, rightIndex), doubleToString(result));
-        //полученную новую строку отправляем на дальнейшую обработку
+        // выполнение выбранной операции и переход к следующей
+        int left = searchNumberLeft(line, index);// левое от знака значение
+        int right = searchNumberRight(line, index);// правое от знака значение
+        int result = simpleCalculation(left, right, operation);// выполнение операции
+        int leftLength = Integer.toString(left).length();// длина левого значения
+        int rightLength = Integer.toString(right).length();// длина правого значения
+        int leftIndex = index - leftLength;// индекс начала левого значения
+        int rightIndex = index + rightLength + 1;// индекс окончания правого значения
+        // замена выражения на результат его выполнения
+        String newLine = line.replace(line.substring(leftIndex, rightIndex), Integer.toString(result));
+        // полученную новую строку отправляем на дальнейшую обработку
         return calculation(newLine);
     }
 
@@ -228,8 +217,8 @@ public class _010 {
      * @param operation символ операции( + - * /)
      * @return результат
      */
-    private double simpleCalculation(double val1, double val2, char operation) {
-        double result = 0;
+    private int simpleCalculation(int val1, int val2, char operation) {
+        int result = 0;
         switch (operation) {
             case '+': {
                 result = val1 + val2;
@@ -244,7 +233,7 @@ public class _010 {
                 break;
             }
             case '/': {
-                result = val1 / val2;
+                result = val1/val2;
                 break;
             }
             default: {
@@ -261,21 +250,21 @@ public class _010 {
      * @param position позиция в строке
      * @return найденное число
      */
-    private double searchNumberLeft(String line, int position) {
-        double result = 0;
-        String sub="";
-        for(int i=position-1; i>=0; i--){
-            var ch=line.charAt(i);
-            var end=ch=='+'||ch=='-'||ch=='*'||ch=='/';
-            if(!end){
-                sub=ch+sub;
-            }else{
-                result=Double.parseDouble(sub);
+    private int searchNumberLeft(String line, int position) {
+        int result = 0;
+        String sub = "";
+        for (int i = position - 1; i >= 0; i--) {
+            var ch = line.charAt(i);
+            var end = ch == '+' || ch == '-' || ch == '*' || ch == '/';
+            if (!end) {
+                sub = ch + sub;
+            } else {
+                result = Integer.parseInt(sub);
                 return result;
             }
         }
-        if(sub.length()>0){
-            result=Double.parseDouble(sub);
+        if (sub.length() > 0) {
+            result = Integer.parseInt(sub);
         }
         return result;
     }
@@ -287,33 +276,24 @@ public class _010 {
      * @param position позиция в строке
      * @return найденное число
      */
-    private double searchNumberRight(String line, int position) {
-        double result = 0;
-        String sub="";
-        for(int i=position+1; i<line.length(); i++){
-            var ch=line.charAt(i);
-            var end=ch=='+'||ch=='-'||ch=='*'||ch=='/';
-            if(!end){
-                sub+=ch;
-            }else{
-                result=Double.parseDouble(sub);
+    private int searchNumberRight(String line, int position) {
+        int result = 0;
+        String sub = "";
+        for (int i = position + 1; i < line.length(); i++) {
+            var ch = line.charAt(i);
+            var end = ch == '+' || ch == '-' || ch == '*' || ch == '/';
+            if (!end) {
+                sub += ch;
+            } else {
+                result = Integer.parseInt(sub);
                 return result;
             }
         }
-        if(sub.length()>0){
-            result=Double.parseDouble(sub);
+        if (sub.length() > 0) {
+            result = Integer.parseInt(sub);
         }
         return result;
     }
 
-    /**
-     * адекватное преобразование double to String
-     * @param number число типа double
-     * @return число преобразованное в строку
-     */
-    private String doubleToString(double number){
-        BigDecimal decimal = new BigDecimal(number);
-        return decimal.toPlainString();
-    }
 
 }
