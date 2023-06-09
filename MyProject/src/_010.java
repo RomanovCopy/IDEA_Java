@@ -7,18 +7,21 @@
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class _010 {
 
     Character[] operations;
+    Character[] numbers;
     String equation;// полное выражение
     String leftPart;// выражение до знака =
     String rightPart;// выражение после знака =
     ArrayList<Integer> indexes;// позиции неизвестных элементов
 
     public _010() {
-        operations = new Character[] { '+', '-', '*', '/', '=' };
+        operations = new Character[] { '+', '-', '*', '/', '=', ')', '(' };
+        numbers=new Character[]{'0','1','2','3','4','5','6','7','8','9'};
         indexes = new ArrayList<>();
         System.out.print("Введи выражение: ");
         equation = getEquation();
@@ -34,7 +37,9 @@ public class _010 {
         }
     }
 
-    // получение и первичная обработка уравнения
+    /**
+     * ввод и первичная обработка выражения
+     */
     private String getEquation() {
 
         var scanner = new Scanner(System.in);
@@ -78,11 +83,25 @@ public class _010 {
             // валидация выражения с
             // установленными значениями
             String temp = new String(array);
+            temp=normalize(temp);
             if (validate(temp)) {
                 list.add(temp);
             }
         }
         return list;
+    }
+
+    /**
+     * удаление символа '0' если он стоит
+     * в начале слова
+     * @param str строка
+     * @return преобразованная строка
+     */
+    private String normalize(String str) {
+        String line="";
+            String regex = "\\b0+([1-9]+\\d*)\\b";
+            line = str.replaceAll(regex, "$1");
+        return line;
     }
 
     /**
@@ -194,7 +213,7 @@ public class _010 {
         int leftLength=doubleToString(left).length();//длина левого значения
         int rightLength=doubleToString(right).length();//длина правого значения
         int leftIndex=index-leftLength;//индекс начала левого значения
-        int rightIndex=index+rightLength;//индекс окончания правого значения
+        int rightIndex=index+rightLength+1;//индекс окончания правого значения
         //замена выражения на результат его выполнения
         String newLine=line.replace(line.substring(leftIndex, rightIndex), doubleToString(result));
         //полученную новую строку отправляем на дальнейшую обработку
@@ -296,4 +315,5 @@ public class _010 {
         BigDecimal decimal = new BigDecimal(number);
         return decimal.toPlainString();
     }
+
 }
