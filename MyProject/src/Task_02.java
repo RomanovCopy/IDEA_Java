@@ -24,7 +24,7 @@ public class Task_02 {
     private int[] sorted( int[]myarray){
         var array=myarray;
         int iteration=0;
-        try (FileWriter fw = new FileWriter("MyProject\\myLog.txt")){
+        try (FileWriter fw = new FileWriter("MyProject\\myLog.txt", true)){
             for (int i = 0; i < array.length - 1; i++) {
                 for (int j = 0; j < array.length - i - 1; j++) {
                     if (array[j] > array[j+1]) {
