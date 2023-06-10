@@ -15,7 +15,7 @@ public class Task_01 {
      */
 
     private StringBuilder sub = new StringBuilder("select * from students WHERE ");
-    private String test = "name:Ivanov,country:Russia,city:Moscow,age:null";
+    private String test = "{name:Ivanov,country:Russia,city:Moscow,age:null}";
 
     public Task_01() {
 
@@ -29,7 +29,6 @@ public class Task_01 {
      * @return строка для добавления к запросу
      */
     private String jsonParse(String json) {
-        boolean c = false;
         var sb = new StringBuilder("");
         // разбиваем на ячейки
         var items = json.split("[, ]");
@@ -39,7 +38,8 @@ public class Task_01 {
             // двух элементов, то вставляем их в
             // строку запроса
             if (subItem != null) {
-                var d = subItem.split("[:]");
+                var sub=subItem.replaceAll("[{}]","");
+                var d = sub.split("[:]");
                 if (d.length == 2 && d[0] != null && d[1] != null && !d[1].equals("null")) {
                     sb.append(d[0] + "=").append(d[1] + " AND ");
                 }
