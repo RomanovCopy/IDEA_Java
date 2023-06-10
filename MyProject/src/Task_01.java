@@ -1,5 +1,4 @@
 
-
 public class Task_01 {
 
     /*
@@ -15,11 +14,43 @@ public class Task_01 {
      * city=Moscow
      */
 
+    private StringBuilder sub = new StringBuilder("select * from students WHERE ");
+    private String test = "name:Ivanov,country:Russia,city:Moscow,age:null";
 
     public Task_01() {
 
-
+        System.out.println(sub.append(jsonParse(test)).toString());
     }
 
+    /**
+     * преобразование строки JSON файла в строку требуемого запроса
+     * 
+     * @param json строка JSON файла
+     * @return строка для добавления к запросу
+     */
+    private String jsonParse(String json) {
+        boolean c = false;
+        var sb = new StringBuilder("");
+        // разбиваем на ячейки
+        var items = json.split("[, ]");
+        // перебираем полученные ячейки
+        for (String subItem : items) {
+            // если ячейка существует и состоит из
+            // двух элементов, то вставляем их в
+            // строку запроса
+            if (subItem != null) {
+                var d = subItem.split("[:]");
+                if (d.length == 2 && d[0] != null && d[1] != null && !d[1].equals("null")) {
+                    sb.append(d[0] + "=").append(d[1] + " AND ");
+                }
+            }
+        }
+        // финальная строка не должна содержать в конце
+        // суффикс "AND"
+        if (sb.toString().endsWith(" AND ")) {
+            sb.delete(sb.length() - 5, sb.length());
+        }
+        return sb.toString();
+    }
 
 }
