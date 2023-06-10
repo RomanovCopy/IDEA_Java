@@ -2,42 +2,60 @@
 результат после каждой итерации запишите в лог-файл */
 
 import java.io.FileWriter;
-import java.security.cert.TrustAnchor;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Task_02 {
 
-    private FileWriter fWriter;
 
-    int[]myArray;
 
     public Task_02() {
-
-        fWriter = new FileWriter("myLog.txt", true);
-        myArray = createArray(50);
-
+        var myArray = createArray(10);
+        System.out.println(Arrays.toString(myArray));
+        myArray=sorted(myArray);
+        System.out.println(Arrays.toString(myArray));
     }
 
-    private void logging(int iteration, int[] array) {
-
-        fWriter.write("After iteration " + (iteration + 1) + ": ");
-        for (int k = 0; k < array.length; k++) {
-            fWriter.write(array[k] + " ");
+     /**
+      * сортировка пузырьком с записью в лог при каждой перестановке
+      * @param myarray сортируемый массив
+      * @return отсортированный массив
+      */
+    private int[] sorted( int[]myarray){
+        var array=myarray;
+        int iteration=0;
+        try (FileWriter fw = new FileWriter("MyProject\\myLog.txt")){
+            for (int i = 0; i < array.length - 1; i++) {
+                for (int j = 0; j < array.length - i - 1; j++) {
+                    if (array[j] > array[j+1]) {
+                    int temp = array[j];
+                    array[j] = array[j+1];
+                    array[j+1] = temp;
+                    fw.write("Итерация " + (iteration+=1) + ": "+ Arrays.toString(array) +",\n");
+                    }
+                }               
+            }
+        }catch(Exception e){
+            System.out.print( "Ошибка: " + e.getMessage());
         }
+        return array;
     }
+
+
+
 
     /**
      * создание массива заданного размера с
-     * рандомными значениями
+     * рандомными значениями от 1 до 100
      * 
      * @param number размер массива
      * @return запрашиваемый массив
      */
     private int[] createArray(int number) {
         var array = new int[number];
-        var random = new Random(100);
+        var random = new Random();
         for (int i = 0; i < number; i++) {
-            array[i] = random.nextInt();
+            array[i] = random.nextInt(100);
         }
         return array;
     }
