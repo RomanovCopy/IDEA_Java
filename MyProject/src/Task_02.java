@@ -31,12 +31,12 @@ public class Task_02 {
                     int temp = array[j];
                     array[j] = array[j+1];
                     array[j+1] = temp;
-                    fw.write("Итерация " + (iteration+=1) + ": "+ Arrays.toString(array) +",\n");
+                    fw.write("Iteration " + (iteration+=1) + ": "+ Arrays.toString(array) +",\n");
                     }
                 }               
             }
         }catch(Exception e){
-            System.out.print( "Ошибка: " + e.getMessage());
+            System.out.print( "Error: " + e.getMessage());
         }
         return array;
     }
