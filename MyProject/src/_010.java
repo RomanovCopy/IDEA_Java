@@ -7,21 +7,24 @@ import java.util.LinkedList;
 public class _010 {
         ArrayList<Integer> arrayList = new ArrayList<>();
         LinkedList<Integer> linkedList = new LinkedList<>();
-        long startTime = System.nanoTime();
+        
 
     public _010(){
 
-        long endTime = System.nanoTime();
+        long startTime = System.nanoTime();
+
+        
                 // Добавление 100000 элементов в ArrayList
         for (int i = 0; i < 100000; i++) {
             arrayList.add(i);
         }
+        long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1000000; // Перевод в миллисекунды
 
 
         System.out.println("Время выполнения: " + duration + " мс");
 
-        
+
         startTime = System.nanoTime();
         // Добавление 100000 элементов в LinkedList
         for (int i = 0; i < 100000; i++) {
