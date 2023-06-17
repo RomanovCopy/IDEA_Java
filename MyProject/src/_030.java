@@ -23,6 +23,7 @@ public class _030{
                         String str = stack.pop();
                         System.out.println(str);
                     }
+                    stack.clear(); // Очистка стека
                 } else if (input.equals("exit")) {
                     flag=false;
                 } else {
