@@ -22,13 +22,11 @@ public class Task_01 {
     public Task_01(String string) {
 
         var deque1 = generateRandomDeque(3);
-        System.out.println("Первый Deque : ");
-        printLinkedList(deque1);
+        System.out.println("Первый Deque : \n"+deque1);
         var num1=dequeToNumber(deque1);
         System.out.println(num1);
         var deque2 = generateRandomDeque(3);
-        System.out.println("Второй Deque : ");
-        printLinkedList(deque2);
+        System.out.println("Второй Deque : \n"+ deque2);
         var num2=dequeToNumber(deque2);
         System.out.println(num2);
         System.out.printf("Умножение : %S * %S = %S \n", num1, num2, numberToLinkedList(num1*num2));
@@ -117,15 +115,4 @@ public class Task_01 {
         return deque;
     }
 
-    /**
-     * вывод консоль
-     * 
-     * @param deque
-     */
-    private void printLinkedList(Deque<Integer> deque) {
-        for (int digit : deque) {
-            System.out.print(digit + " ");
-        }
-        System.out.println();
-    }
 }
