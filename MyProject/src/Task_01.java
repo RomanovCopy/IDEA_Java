@@ -122,7 +122,7 @@ public class Task_01 {
      * 
      * @param deque
      */
-    public static void printLinkedList(Deque<Integer> deque) {
+    private void printLinkedList(Deque<Integer> deque) {
         for (int digit : deque) {
             System.out.print(digit + " ");
         }
