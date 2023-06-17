@@ -8,11 +8,13 @@
  * и составляет из них списки заданной длины(по умолчанию: 3).
  * Затем эти списки преобразуются в числа с учетом обратного
  * расположения в списке и с полученными числами проводятся
- * арифметические операции.
+ * арифметические операции после чего результат преобразованный
+ * в связный список выводится в консоль
  */
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class Task_01 {
@@ -29,8 +31,8 @@ public class Task_01 {
         printLinkedList(deque2);
         var num2=dequeToNumber(deque2);
         System.out.println(num2);
-        System.out.printf("Умножение : %S * %S = %S \n", num1, num2, num1*num2);
-        System.out.printf("Сложение : %S + %S = %S \n", num1, num2, num1+num2);
+        System.out.printf("Умножение : %S * %S = %S \n", num1, num2, numberToLinkedList(num1*num2));
+        System.out.printf("Сложение : %S + %S = %S \n", num1, num2, numberToLinkedList(num1+num2));
     }
 
 
@@ -63,6 +65,37 @@ public class Task_01 {
         }
 
         return number;
+    }
+
+
+    /**
+     * Преобразование числа в связный список
+     * @param number число
+     * @return связный список
+     */
+    private LinkedList<Integer> numberToLinkedList(int number) {
+        LinkedList<Integer> linkedList = new LinkedList<>();
+
+        /*если число равно 0 */
+        if (number == 0) {
+            linkedList.add(0);
+            return linkedList;
+        }
+        boolean isNegative = number<0;
+        number = Math.abs(number);
+
+        while (number > 0) {
+            int digit = number % 10;
+            linkedList.addFirst(digit);
+            number /= 10;
+        }
+        /*Если входное число отрицательное, умножаем
+         * нулевой элемент на -1*/
+        if (isNegative) {
+            linkedList.set(0, linkedList.get(0) * -1);
+        }
+
+        return linkedList;
     }
 
     /**
