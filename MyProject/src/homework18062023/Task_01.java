@@ -1,11 +1,7 @@
 package homework18062023;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /*Реализуйте структуру телефонной книги с помощью HashMap.
 Программа также должна учитывать, что во входной структуре будут 
