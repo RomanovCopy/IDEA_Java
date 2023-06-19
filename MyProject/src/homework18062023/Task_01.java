@@ -34,9 +34,6 @@ public class Task_01 {
      * добавление контакта
      * @param name имя контакта
      * @param number номер телефона
-     * @return результат добавления 
-     * True - успех
-     * False - отмена или ошибка
      */
     public void addContact(String name, String number){
         //проверка на наличие контакта в списке контактов
