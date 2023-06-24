@@ -1,8 +1,9 @@
-package homework18062023;
+package classwork24062023;
 
 public class Program {
 
     public static void main(String[] args) {
-        new Task_01();
+        
     }
+    
 }
