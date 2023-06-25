@@ -2,6 +2,7 @@ package homework24062023;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class Program {
 
@@ -37,10 +39,11 @@ public class Program {
                 "Видеокарта",
                 "Цена",
         };
+            sale();
     }
 
 
-    public boolean sale() {
+    public static boolean sale() {
         int operation = 0;
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.println("Выберите операцию :");
@@ -57,23 +60,53 @@ public class Program {
         var list=new ArrayList<>(notebooks);
         switch (operation) {
             case 1: {
-                sortByParameter(list, sortingParameters, "brand");
+                sortByParameter(list, Comparator.comparing(Notebook::getBrand));
                 allList();
                 break;
             }
             case 2: {
+                System.out.println("Доступные бренды : ");
+                var set=new HashSet<String>();
+                notebooks.forEach(note->set.add(note.getBrand()));
+                var temp=new ArrayList<String>(set);
+                Collections.sort(temp);
+                temp.forEach(val->System.out.print(val + "\n"));
                 break;
             }
             case 3: {
+                System.out.println("Доступные размеры RAM : ");
+                var set=new HashSet<Integer>();
+                notebooks.forEach(note->set.add(note.getRamSize()));
+                var temp=new ArrayList<Integer>(set);
+                Collections.sort(temp);
+                temp.forEach(val->System.out.print(val + "\n"));
                 break;
             }
             case 4: {
+                System.out.println("Доступные объемы накопителя : ");
+                var set=new HashSet<Integer>();
+                notebooks.forEach(note->set.add(note.getHardDiskSize()));
+                var temp=new ArrayList<Integer>(set);
+                Collections.sort(temp);
+                temp.forEach(val->System.out.print(val + "\n"));
                 break;
             }
             case 5: {
+                System.out.println("Доступные бренды видеокарт : ");
+                var set=new HashSet<String>();
+                notebooks.forEach(note->set.add(note.getGpuBrand()));
+                var temp=new ArrayList<String>(set);
+                Collections.sort(temp);
+                temp.forEach(val->System.out.print(val + "\n"));
                 break;
             }
             case 6:{
+                System.out.println("Стоимость : ");
+                var set=new HashSet<Integer>();
+                notebooks.forEach(note->set.add(note.getPrice()));
+                var temp=new ArrayList<Integer>(set);
+                Collections.sort(temp);
+                temp.forEach(val->System.out.print(val + "\n"));
                 break;
             }
             default :{
@@ -86,11 +119,13 @@ public class Program {
 
     private static void allList(){
         for(Notebook note:notebooks){
-            System.out.printf("%s\t  %s\t  %s\t  %d\t  %d\t  %d\t ", 
+            System.out.printf("%s\t  %s\t  %s\t  %d\t  %d\t  %d\t \n", 
             note.getBrand(), note.getModel(), note.getGpuBrand(), note.getHardDiskSize(), 
             note.getRamSize(), note.getPrice());
         }
     }
+
+    
 
     public static Notebook selectNotebook(String brand, String model) {
         for (Notebook notebook : notebooks) {
@@ -101,15 +136,28 @@ public class Program {
         return null;
     }
 
-    public static void sortByParameter(List<Notebook> notebooks,
-            Map<String, Comparator<Notebook>> sortingParameters,
-            String parameter) {
-        Comparator<Notebook> comparator = sortingParameters.get(parameter);
+    public static void sortByParameter(List<Notebook> notebooks, Comparator<Notebook> comparator) {
         if (comparator != null) {
             notebooks.sort(comparator);
         } else {
             System.out.println("Invalid parameter for sorting");
         }
+    }
+
+    /**
+     * получение множества удовлетворяющих условию экземпляров
+     * @param notebooks исходное множество
+     * @param filterPredicate предикат фильтрования
+     * @return отфильтрованное множество
+     */
+    public Set<Notebook> filter(Set<Notebook> notebooks, Predicate<Notebook> filterPredicate) {
+        Set<Notebook> filteredObjects = new HashSet<>();
+        for (Notebook note : notebooks) {
+            if (filterPredicate.test(note)) {
+                filteredObjects.add(note);
+            }
+        }
+        return filteredObjects;
     }
 
     /**
