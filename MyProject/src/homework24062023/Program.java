@@ -62,20 +62,15 @@ public class Program {
                 System.out.println("Доступные бренды : ");
                 var set = new HashSet<String>();
                 notebooks.forEach(note -> set.add(note.getBrand()));
-                var temp = setToMap(set);
-                for (Integer key : temp.keySet()) {
-                    System.out.println(key + " " + temp.get(key));
-                }
-                selectBrand();
+                selectBrand(set);
                 break;
             }
             case 3: {
                 System.out.println("Доступные размеры RAM : ");
                 var set = new HashSet<Integer>();
                 notebooks.forEach(note -> set.add(note.getRamSize()));
-                var temp = new ArrayList<Integer>(set);
-                Collections.sort(temp);
-                temp.forEach(val -> System.out.print(val + "\n"));
+                var temp = setToMap(set);
+                temp.forEach((key, value)->System.out.println(key+" "+value));
                 selectRAM();
                 break;
             }
@@ -83,9 +78,8 @@ public class Program {
                 System.out.println("Доступные объемы накопителя : ");
                 var set = new HashSet<Integer>();
                 notebooks.forEach(note -> set.add(note.getHardDiskSize()));
-                var temp = new ArrayList<Integer>(set);
-                Collections.sort(temp);
-                temp.forEach(val -> System.out.print(val + "\n"));
+                var temp = setToMap(set);
+                temp.forEach((key, value)->System.out.println(key+" "+value));
                 selectHDD();
                 break;
             }
@@ -94,9 +88,7 @@ public class Program {
                 var set = new HashSet<String>();
                 notebooks.forEach(note -> set.add(note.getGpuBrand()));
                 var temp = setToMap(set);
-                for (Integer key : temp.keySet()) {
-                    System.out.println(key + " " + temp.get(key));
-                }
+                temp.forEach((key, value)->System.out.println(key+" "+value));
                 selectGPU();
                 break;
             }
@@ -104,9 +96,8 @@ public class Program {
                 System.out.println("Стоимость : ");
                 var set = new HashSet<Integer>();
                 notebooks.forEach(note -> set.add(note.getPrice()));
-                var temp = new ArrayList<Integer>(set);
-                Collections.sort(temp);
-                temp.forEach(val -> System.out.print(val + "\n"));
+                var temp = setToMap(set);
+                temp.forEach((key, value)->System.out.println(key+" "+value));
                 selectPrice();
                 break;
             }
@@ -125,16 +116,22 @@ public class Program {
         }
     }
 
-    private static boolean selectBrand() {
-        int brand = request("Введите номер бренда из представленных : ");
-        Predicate<Notebook> predicate = note -> note.getBrand().equals(brand);
-        var set = filter(notebooks, predicate);
+    /**
+     * выбор модели исходя из бренда
+     * @param set множество имен брендов
+     * @return результат выбора True - удачно, False - отмена
+     */
+    private static boolean selectBrand(HashSet<String>set) {
+        var temp = setToMap(set);
+        temp.forEach((key,value)->System.out.println(key+" "+value));
+        int brandKey = request("Введите номер бренда из представленных : ");
+        //получаем множество моделей выбранного бренда
+        Predicate<Notebook> predicate = note -> note.getBrand().equals(temp.get(brandKey));
+        var setBrand = filter(notebooks, predicate);
         var models=new HashSet<String>();
-        set.forEach(item->models.add(item.getModel()));
-        var temp = setToMap(models);
-        for (Integer key : temp.keySet()) {
-            System.out.println(key + " " + temp.get(key));
-        }
+        setBrand.forEach(item->models.add(item.getModel()));
+        var listModels = setToMap(models);
+        listModels.forEach((key,value)->System.out.println(key+" "+value));
         return true;
     }
 
@@ -167,33 +164,40 @@ public class Program {
      */
     private static Integer request(String text) {
         int result = -1;
+        System.out.print(text);
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println(text);
-            result = scanner.nextInt();
+            boolean flag=true;
+            while (flag) {
+                if (scanner.hasNextInt()) {
+                    result = scanner.nextInt();
+                    flag=false;
+                }
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return null;
+            return new Scanner(System.in).nextInt();
         }
         return result;
     }
 
+
     /**
-     * преобразование с сортировкой множества HashSet<String> в словарь
-     * HashMap<Integer, String>
-     * 
+     * преобразование с сортировкой множества HashSet<T> в словарь
      * @param set исходное множество
      * @return результирующий словарь
+     * @param <T>
      */
-    private static HashMap<Integer, String> setToMap(HashSet<String> set) {
-        HashMap<Integer, String> hashMap = new HashMap<>();
-        TreeSet<String> sortedSet = new TreeSet<>(set);
+    private static <T> HashMap<Integer, T> setToMap(HashSet<T> set) {
+        HashMap<Integer, T> hashMap = new HashMap<>();
+        TreeSet<T> sortedSet = new TreeSet<>(set);
         int key = 1;
-        for (String item : sortedSet) {
+        for (T item : sortedSet) {
             hashMap.put(key, item);
             key++;
         }
         return hashMap;
     }
+
 
     public static Notebook selectNotebook(String brand, String model) {
         for (Notebook notebook : notebooks) {
@@ -242,7 +246,7 @@ public class Program {
         notebooks.add(new Notebook("Brand1", "Model1", 1000, 8, 256, "GPU1"));
         notebooks.add(new Notebook("Brand2", "Model2", 1500, 16, 512, "GPU2"));
         notebooks.add(new Notebook("Brand3", "Model3", 1200, 8, 512, "GPU3"));
-        notebooks.add(new Notebook("Brand4", "Model4", 3000, 32, 512, "GPU1"));
+        notebooks.add(new Notebook("Brand4", "Model4", 3000, 32, 1024, "GPU1"));
         notebooks.add(new Notebook("Brand5", "Model5", 1500, 16, 512, "GPU2"));
         notebooks.add(new Notebook("Brand6", "Model6", 1200, 8, 512, "GPU3"));
 
