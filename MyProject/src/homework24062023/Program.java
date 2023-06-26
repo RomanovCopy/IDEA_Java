@@ -164,9 +164,11 @@ public class Program {
      */
     private static Integer request(String text) {
         int result = -1;
+        String temp="";
         System.out.print(text);
         try (Scanner scanner = new Scanner(System.in)) {
-            result=Integer.parseInt(scanner.nextLine());
+            temp=scanner.nextLine();
+            result=Integer.parseInt(temp);
 //            boolean flag=true;
 //            while (flag) {
 //                if (scanner.hasNextInt()) {
