@@ -150,8 +150,8 @@ public class Program {
      * @param filterPredicate предикат фильтрования
      * @return отфильтрованное множество
      */
-    public Set<Notebook> filter(Set<Notebook> notebooks, Predicate<Notebook> filterPredicate) {
-        Set<Notebook> filteredObjects = new HashSet<>();
+    public static HashSet<Object> filter(Set<Notebook> notebooks, Predicate<Notebook> filterPredicate) {
+        HashSet<Object> filteredObjects = new HashSet<>();
         for (Notebook note : notebooks) {
             if (filterPredicate.test(note)) {
                 filteredObjects.add(note);
