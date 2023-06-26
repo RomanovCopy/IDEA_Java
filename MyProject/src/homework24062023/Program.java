@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 
 public class Program {
@@ -39,25 +40,18 @@ public class Program {
                 "Видеокарта",
                 "Цена",
         };
-            sale();
+        sale();
     }
 
-
     public static boolean sale() {
-        int operation = 0;
-        try (Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Выберите операцию :");
-            int count = 1;
-            for (var name : operations) {
-                System.out.printf("%d\t - %s\t\n", count, name);
-                count++;
-            }
-            operation = scanner.nextInt();
-        } catch (Exception e) {
-            e.getMessage();
-            return false;
+        System.out.println("Доступные операции :");
+        int count = 1;
+        for (var name : operations) {
+            System.out.printf("%d\t - %s\t\n", count, name);
+            count++;
         }
-        var list=new ArrayList<>(notebooks);
+        int operation = request("Введите номер операции :");
+        var list = new ArrayList<>(notebooks);
         switch (operation) {
             case 1: {
                 sortByParameter(list, Comparator.comparing(Notebook::getBrand));
@@ -66,66 +60,140 @@ public class Program {
             }
             case 2: {
                 System.out.println("Доступные бренды : ");
-                var set=new HashSet<String>();
-                notebooks.forEach(note->set.add(note.getBrand()));
-                var temp=new ArrayList<String>(set);
-                Collections.sort(temp);
-                temp.forEach(val->System.out.print(val + "\n"));
+                var set = new HashSet<String>();
+                notebooks.forEach(note -> set.add(note.getBrand()));
+                var temp = setToMap(set);
+                for (Integer key : temp.keySet()) {
+                    System.out.println(key + " " + temp.get(key));
+                }
+                selectBrand();
                 break;
             }
             case 3: {
                 System.out.println("Доступные размеры RAM : ");
-                var set=new HashSet<Integer>();
-                notebooks.forEach(note->set.add(note.getRamSize()));
-                var temp=new ArrayList<Integer>(set);
+                var set = new HashSet<Integer>();
+                notebooks.forEach(note -> set.add(note.getRamSize()));
+                var temp = new ArrayList<Integer>(set);
                 Collections.sort(temp);
-                temp.forEach(val->System.out.print(val + "\n"));
+                temp.forEach(val -> System.out.print(val + "\n"));
+                selectRAM();
                 break;
             }
             case 4: {
                 System.out.println("Доступные объемы накопителя : ");
-                var set=new HashSet<Integer>();
-                notebooks.forEach(note->set.add(note.getHardDiskSize()));
-                var temp=new ArrayList<Integer>(set);
+                var set = new HashSet<Integer>();
+                notebooks.forEach(note -> set.add(note.getHardDiskSize()));
+                var temp = new ArrayList<Integer>(set);
                 Collections.sort(temp);
-                temp.forEach(val->System.out.print(val + "\n"));
+                temp.forEach(val -> System.out.print(val + "\n"));
+                selectHDD();
                 break;
             }
             case 5: {
                 System.out.println("Доступные бренды видеокарт : ");
-                var set=new HashSet<String>();
-                notebooks.forEach(note->set.add(note.getGpuBrand()));
-                var temp=new ArrayList<String>(set);
-                Collections.sort(temp);
-                temp.forEach(val->System.out.print(val + "\n"));
+                var set = new HashSet<String>();
+                notebooks.forEach(note -> set.add(note.getGpuBrand()));
+                var temp = setToMap(set);
+                for (Integer key : temp.keySet()) {
+                    System.out.println(key + " " + temp.get(key));
+                }
+                selectGPU();
                 break;
             }
-            case 6:{
+            case 6: {
                 System.out.println("Стоимость : ");
-                var set=new HashSet<Integer>();
-                notebooks.forEach(note->set.add(note.getPrice()));
-                var temp=new ArrayList<Integer>(set);
+                var set = new HashSet<Integer>();
+                notebooks.forEach(note -> set.add(note.getPrice()));
+                var temp = new ArrayList<Integer>(set);
                 Collections.sort(temp);
-                temp.forEach(val->System.out.print(val + "\n"));
+                temp.forEach(val -> System.out.print(val + "\n"));
+                selectPrice();
                 break;
             }
-            default :{
+            default: {
                 return false;
             }
         }
+        return true;
+    }
+
+    private static void allList() {
+        for (Notebook note : notebooks) {
+            System.out.printf("%s\t  %s\t  %s\t  %d\t  %d\t  %d\t \n",
+                    note.getBrand(), note.getModel(), note.getGpuBrand(), note.getHardDiskSize(),
+                    note.getRamSize(), note.getPrice());
+        }
+    }
+
+    private static boolean selectBrand() {
+        int brand = request("Введите номер бренда из представленных : ");
+        Predicate<Notebook> predicate = note -> note.getBrand().equals(brand);
+        var set = filter(notebooks, predicate);
+        var models=new HashSet<String>();
+        set.forEach(item->models.add(item.getModel()));
+        var temp = setToMap(models);
+        for (Integer key : temp.keySet()) {
+            System.out.println(key + " " + temp.get(key));
+        }
+        return true;
+    }
+
+    private static boolean selectRAM() {
+        int ram = request("Введите размер ОЗУ из представленных :");
+        return true;
+    }
+
+    private static boolean selectHDD() {
+        int hdd = request("Введите размер накопителя из представленных :");
 
         return true;
     }
 
-    private static void allList(){
-        for(Notebook note:notebooks){
-            System.out.printf("%s\t  %s\t  %s\t  %d\t  %d\t  %d\t \n", 
-            note.getBrand(), note.getModel(), note.getGpuBrand(), note.getHardDiskSize(), 
-            note.getRamSize(), note.getPrice());
-        }
+    private static boolean selectGPU() {
+        int gpu = request("Введите номер видеокарты из представленных : ");
+        return true;
     }
 
-    
+    private static boolean selectPrice() {
+        int price = request("Введите стоимость из представленных :");
+        return true;
+    }
+
+    /**
+     * запрос к пользователю
+     * 
+     * @param text текст запроса
+     * @return строка ответа
+     */
+    private static Integer request(String text) {
+        int result = -1;
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println(text);
+            result = scanner.nextInt();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+        return result;
+    }
+
+    /**
+     * преобразование с сортировкой множества HashSet<String> в словарь
+     * HashMap<Integer, String>
+     * 
+     * @param set исходное множество
+     * @return результирующий словарь
+     */
+    private static HashMap<Integer, String> setToMap(HashSet<String> set) {
+        HashMap<Integer, String> hashMap = new HashMap<>();
+        TreeSet<String> sortedSet = new TreeSet<>(set);
+        int key = 1;
+        for (String item : sortedSet) {
+            hashMap.put(key, item);
+            key++;
+        }
+        return hashMap;
+    }
 
     public static Notebook selectNotebook(String brand, String model) {
         for (Notebook notebook : notebooks) {
@@ -146,12 +214,13 @@ public class Program {
 
     /**
      * получение множества удовлетворяющих условию экземпляров
-     * @param notebooks исходное множество
+     * 
+     * @param notebooks       исходное множество
      * @param filterPredicate предикат фильтрования
      * @return отфильтрованное множество
      */
-    public static HashSet<Object> filter(Set<Notebook> notebooks, Predicate<Notebook> filterPredicate) {
-        HashSet<Object> filteredObjects = new HashSet<>();
+    public static HashSet<Notebook> filter(Set<Notebook> notebooks, Predicate<Notebook> filterPredicate) {
+        HashSet<Notebook> filteredObjects = new HashSet<>();
         for (Notebook note : notebooks) {
             if (filterPredicate.test(note)) {
                 filteredObjects.add(note);
