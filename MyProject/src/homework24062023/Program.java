@@ -166,16 +166,17 @@ public class Program {
         int result = -1;
         System.out.print(text);
         try (Scanner scanner = new Scanner(System.in)) {
-            boolean flag=true;
-            while (flag) {
-                if (scanner.hasNextInt()) {
-                    result = scanner.nextInt();
-                    flag=false;
-                }
-            }
+            result=Integer.parseInt(scanner.nextLine());
+//            boolean flag=true;
+//            while (flag) {
+//                if (scanner.hasNextInt()) {
+//                    result = scanner.nextInt();
+//                    flag=false;
+//                }
+//            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return new Scanner(System.in).nextInt();
+            return -1;
         }
         return result;
     }
