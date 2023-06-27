@@ -14,24 +14,22 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 
 public class Program {
-
-    private static Set<Notebook> notebooks;
-    private static Map<String, Comparator<Notebook>> sortingParameters;
+    /**
+     * множество товаров
+     */
+    private static HashSet<Notebook> notebooks;
+    /**
+     * доступные операции
+     */
     private static String[] operations;
-
+    /**
+     * поток чтения с консоли
+     */
+    private static Scanner scanner;
     public static void main(String[] args) {
-
-        sortingParameters = new HashMap<>();
+        //создание множества товаров
         notebooks = createNotebooks();
-
-        // Определение параметров и соответствующих компараторов для сортировки
-        sortingParameters.put("brand", Comparator.comparing(Notebook::getBrand));
-        sortingParameters.put("model", Comparator.comparing(Notebook::getModel));
-        sortingParameters.put("price", Comparator.comparingInt(Notebook::getPrice));
-        sortingParameters.put("ramSize", Comparator.comparingInt(Notebook::getRamSize));
-        sortingParameters.put("hardDiskSize", Comparator.comparingInt(Notebook::getHardDiskSize));
-        sortingParameters.put("gpuBrand", Comparator.comparing(Notebook::getGpuBrand));
-
+        //создание массива доступных операций
         operations = new String[] {
                 "Весь список",
                 "Бренд",
@@ -40,9 +38,18 @@ public class Program {
                 "Видеокарта",
                 "Цена",
         };
-        sale();
+        //запускаем программу
+        if(scanner==null){
+            scanner=new Scanner(System.in);
+            sale();
+            scanner.close();
+        }
     }
 
+    /**
+     * ребота продавца
+     * @return
+     */
     public static boolean sale() {
         System.out.println("Доступные операции :");
         int count = 1;
@@ -51,11 +58,9 @@ public class Program {
             count++;
         }
         int operation = request("Введите номер операции :");
-        var list = new ArrayList<>(notebooks);
         switch (operation) {
             case 1: {
-                sortByParameter(list, Comparator.comparing(Notebook::getBrand));
-                allList();
+                allList(notebooks);
                 break;
             }
             case 2: {
@@ -69,36 +74,28 @@ public class Program {
                 System.out.println("Доступные размеры RAM : ");
                 var set = new HashSet<Integer>();
                 notebooks.forEach(note -> set.add(note.getRamSize()));
-                var temp = setToMap(set);
-                temp.forEach((key, value)->System.out.println(key+" "+value));
-                selectRAM();
+                selectRAM(set);
                 break;
             }
             case 4: {
                 System.out.println("Доступные объемы накопителя : ");
                 var set = new HashSet<Integer>();
                 notebooks.forEach(note -> set.add(note.getHardDiskSize()));
-                var temp = setToMap(set);
-                temp.forEach((key, value)->System.out.println(key+" "+value));
-                selectHDD();
+                selectHDD(set);
                 break;
             }
             case 5: {
                 System.out.println("Доступные бренды видеокарт : ");
                 var set = new HashSet<String>();
                 notebooks.forEach(note -> set.add(note.getGpuBrand()));
-                var temp = setToMap(set);
-                temp.forEach((key, value)->System.out.println(key+" "+value));
-                selectGPU();
+                selectGPU(set);
                 break;
             }
             case 6: {
                 System.out.println("Стоимость : ");
                 var set = new HashSet<Integer>();
                 notebooks.forEach(note -> set.add(note.getPrice()));
-                var temp = setToMap(set);
-                temp.forEach((key, value)->System.out.println(key+" "+value));
-                selectPrice();
+                selectPrice(set);
                 break;
             }
             default: {
@@ -108,12 +105,30 @@ public class Program {
         return true;
     }
 
-    private static void allList() {
-        for (Notebook note : notebooks) {
-            System.out.printf("%s\t  %s\t  %s\t  %d\t  %d\t  %d\t \n",
-                    note.getBrand(), note.getModel(), note.getGpuBrand(), note.getHardDiskSize(),
-                    note.getRamSize(), note.getPrice());
+    /**
+     * выбор модели исходя из множества моделей
+     * @param set множество моделей
+     */
+    private static void allList(HashSet<Notebook>set) {
+        int index=1;
+        var list = new ArrayList<>(set);
+        list.sort(Comparator.comparing(Notebook::getBrand));
+        HashMap<Integer, Notebook>map=new HashMap<>();
+        for(var item:list){
+            map.put(index, item);
+            index++;
         }
+        map.forEach((key,value)->System.out.println(key+" "+value.toString()));
+        index=request("Выберите номер модели : ");
+        if( map.containsKey(index)){
+            var selectNotebook=map.get(index);
+            System.out.printf("Ваш выбор : %s", map.get(index).toString() );
+            System.out.println("Спасибо за покупку!1");
+        }
+        else {
+            System.out.println("Вы ничего не выбрали.");
+        }
+        System.out.println("Приходите еще!");
     }
 
     /**
@@ -121,39 +136,70 @@ public class Program {
      * @param set множество имен брендов
      * @return результат выбора True - удачно, False - отмена
      */
-    private static boolean selectBrand(HashSet<String>set) {
+    private static void selectBrand(HashSet<String>set) {
         var temp = setToMap(set);
         temp.forEach((key,value)->System.out.println(key+" "+value));
         int brandKey = request("Введите номер бренда из представленных : ");
         //получаем множество моделей выбранного бренда
         Predicate<Notebook> predicate = note -> note.getBrand().equals(temp.get(brandKey));
         var setBrand = filter(notebooks, predicate);
-        var models=new HashSet<String>();
-        setBrand.forEach(item->models.add(item.getModel()));
-        var listModels = setToMap(models);
-        listModels.forEach((key,value)->System.out.println(key+" "+value));
-        return true;
+        allList(setBrand);
     }
 
-    private static boolean selectRAM() {
-        int ram = request("Введите размер ОЗУ из представленных :");
-        return true;
+    /**
+     * выбор модели исходя из размера ОЗУ
+     * @param set множество доступных размеров ОЗУ
+     */
+    private static void selectRAM(HashSet<Integer>set) {
+        var temp = setToMap(set);
+        temp.forEach((key,value)->System.out.println(key+" "+value));
+        int ramKey = request("Введите номер ОЗУ из представленных :");
+        //получаем множество моделей выбранного размера ОЗУ
+        Predicate<Notebook> predicate = note -> note.getRamSize()== temp.get(ramKey);
+        var setRam = filter(notebooks, predicate);
+        allList(setRam);
     }
 
-    private static boolean selectHDD() {
-        int hdd = request("Введите размер накопителя из представленных :");
-
-        return true;
+    /**
+     * выбор на основании размера накопителя
+     * @param set множество доступных размеров накопителей
+     */
+    private static void selectHDD(HashSet<Integer>set) {
+        var temp = setToMap(set);
+        temp.forEach((key,value)->System.out.println(key+" "+value));
+        int hddKey = request("Введите размер накопителя из представленных :");
+        //получаем множество моделей выбранного размера накопителя
+        Predicate<Notebook> predicate = note -> note.getHardDiskSize()== temp.get(hddKey);
+        var setHDD = filter(notebooks, predicate);
+        allList(setHDD);
     }
 
-    private static boolean selectGPU() {
-        int gpu = request("Введите номер видеокарты из представленных : ");
-        return true;
+    /**
+     * выбор на основании модели видеокарты
+     * @param set множество доступных моделей видеокарт
+     */
+    private static void selectGPU(HashSet<String>set) {
+        var temp = setToMap(set);
+        temp.forEach((key,value)->System.out.println(key+" "+value));
+        int gpuKey = request("Введите номер видеокарты из представленных : ");
+        //получаем множество моделей выбранного размера накопителя
+        Predicate<Notebook> predicate = note -> note.getGpuBrand().equals(temp.get(gpuKey));
+        var setGpu = filter(notebooks, predicate);
+        allList(setGpu);
     }
 
-    private static boolean selectPrice() {
-        int price = request("Введите стоимость из представленных :");
-        return true;
+    /**
+     * выбор на основе цены
+     * @param set множество доступных цен
+     */
+    private static void selectPrice(HashSet<Integer>set) {
+        var temp = setToMap(set);
+        temp.forEach((key,value)->System.out.println(key+" "+value));
+        int priceKey = request("Введите стоимость из представленных :");
+        //получаем множество моделей выбранного размера накопителя
+        Predicate<Notebook> predicate = note -> note.getPrice()==temp.get(priceKey);
+        var setPrice = filter(notebooks, predicate);
+        allList(setPrice);
     }
 
     /**
@@ -166,23 +212,11 @@ public class Program {
         int result = -1;
         String temp="";
         System.out.print(text);
-        try (Scanner scanner = new Scanner(System.in)) {
-            temp=scanner.nextLine();
-            result=Integer.parseInt(temp);
-//            boolean flag=true;
-//            while (flag) {
-//                if (scanner.hasNextInt()) {
-//                    result = scanner.nextInt();
-//                    flag=false;
-//                }
-//            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return -1;
+        if(scanner.hasNextInt()){
+            result=scanner.nextInt();
         }
         return result;
     }
-
 
     /**
      * преобразование с сортировкой множества HashSet<T> в словарь
@@ -199,24 +233,6 @@ public class Program {
             key++;
         }
         return hashMap;
-    }
-
-
-    public static Notebook selectNotebook(String brand, String model) {
-        for (Notebook notebook : notebooks) {
-            if (notebook.getModel().equals(model) && notebook.getBrand().equals(brand)) {
-                return notebook;
-            }
-        }
-        return null;
-    }
-
-    public static void sortByParameter(List<Notebook> notebooks, Comparator<Notebook> comparator) {
-        if (comparator != null) {
-            notebooks.sort(comparator);
-        } else {
-            System.out.println("Invalid parameter for sorting");
-        }
     }
 
     /**
@@ -241,11 +257,11 @@ public class Program {
      * 
      * @return
      */
-    public static Set<Notebook> createNotebooks() {
+    public static HashSet<Notebook> createNotebooks() {
 
         notebooks = new HashSet<>();
 
-        // Создание и добавление ноутбуков в список
+        // Создание и добавление ноутбуков в множество
         notebooks.add(new Notebook("Brand1", "Model1", 1000, 8, 256, "GPU1"));
         notebooks.add(new Notebook("Brand2", "Model2", 1500, 16, 512, "GPU2"));
         notebooks.add(new Notebook("Brand3", "Model3", 1200, 8, 512, "GPU3"));
